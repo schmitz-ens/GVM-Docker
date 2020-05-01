@@ -111,8 +111,10 @@ done
 
 chmod 666 /tmp/ospd.sock
 
+su -c "gvm-manage-certs -af" gvm
+
 echo "Starting Greenbone Vulnerability Manager..."
-su -c "gvmd" gvm
+su -c "gvmd --listen=0.0.0.0 --port=9390" gvm
 
 until su -c "gvmd --get-users" gvm; do
 	sleep 1
@@ -126,7 +128,7 @@ if [ ! -f "/data/created_gvm_user" ]; then
 fi
 
 echo "Starting Greenbone Security Assistant..."
-su -c "gsad --verbose --http-only --no-redirect --port=9392" gvm
+su -c "gsad --verbose --http-only --no-redirect --port=9392 --mport=9390 --mlisten=127.0.0.1" gvm
 
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+ Your GVM 11 container is now ready to use! +"
